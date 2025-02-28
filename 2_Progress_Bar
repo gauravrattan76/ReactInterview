@@ -1,0 +1,87 @@
+Progress bar in React -
+_________________________
+
+App.js-
+
+import logo from './logo.svg';
+import './App.css';
+import Progress1 from './components/Progress1';
+
+function App() {
+  const val = [5, 10, 20, 30, 40, 50, 70, 80, 100]
+
+  return (
+    <div className="App">
+      {
+        val.map((item, index) => (
+          <div key={index}>
+            <Progress1 progress={item} />
+          </div>
+        ))
+      }
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+____________________
+
+
+Progress.js
+
+import react, { useEffect, useState } from 'react'
+import './Progress1.css'
+
+
+const Progress1 = ({ progress }) => {
+    console.log(progress)
+
+    const [val, setVal] = useState([])
+
+    useEffect(() => {
+        setTimeout(() => {
+            setVal(progress)
+        }, 500)
+
+    }, [progress])
+
+    return (
+        <>
+
+            <div className='outer'>
+                <div className='inner' style={{ transform: `translateX(${val - 100}%)` }}>
+                    {val}%
+                </div>
+            </div>
+
+        </>)
+}
+
+export default Progress1
+
+
+_________
+
+
+Progress.css
+
+.outer{
+    border:  1px solid black;
+    margin-top: 10px;
+}
+
+.inner{
+    background-color: green;
+    text-align: right;
+    transition: 0.5s ease-in;
+}
+
+
+
+
+
+
