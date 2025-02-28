@@ -1,0 +1,102 @@
+Creating a directory structure in react with expand and collapse functionality.
+
+First create Data.js
+
+
+const data = [
+    {
+        "id": 1,
+        "name": "src",
+        "isFolder": true,
+        "children": [
+            {
+                "id": 2,
+                "name": "app.js",
+                "isFolder": false,
+            },
+            {
+                "id": 3,
+                "name": "components",
+                "isFolder": true,
+                "children": [
+                    {
+                        "id": 4,
+                        "name": "routes.js",
+                        "isFolder": false,
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "name": "public",
+        "isFolder": true,
+        "children": [
+            {
+                "id": 6,
+                "name": "index.html",
+                "isFolder": false,
+            },
+            {
+                "id": 7,
+                "name": "manifest.json",
+                "isFolder": false,
+            }
+        ]
+    }
+]
+
+
+export default data;
+
+
+______________________
+
+
+FolderStr.js
+
+
+import React, { useState } from 'react'
+import data from './data'
+
+
+const FileComp = ({ list }) => {
+
+    const [open, setOpen] = useState({})
+
+    const handleOpen = (node) => {
+        console.log('handle open is called', node)
+        setOpen(p => ({
+            ...p,
+            [node.name] : !p[node.name]
+        }))
+    }
+    return (
+        <>
+            {
+                list.map(node => {
+                    return (
+                        <div key={node.id}>
+                            {node?.isFolder  && <span style={{ cursor: 'pointer' }} onClick={() => handleOpen(node)}>{open[node.name] ? "-" : "+"}</span>}
+                            {node.name}
+                            {node?.isFolder  && open[node.name] && <div style={{ marginLeft: '2%' }}> <FileComp list={node.children} /></div>}
+                        </div>
+                    )
+                })
+            }
+        </>
+    )
+}
+
+const FolderStr = () => {
+    return (
+        <>
+            This is the folder structure we have
+            <br />
+            <br />
+            <FileComp list={data} />
+        </>)
+}
+
+export default FolderStr
