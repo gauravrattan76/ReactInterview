@@ -1,0 +1,88 @@
+Creating a search bar with debounce  in react-
+_____________________________________________
+
+Search.js-
+
+Also using caching 
+
+
+import React, { useEffect, useState } from 'react'
+import './Search.css'
+
+const Search = () => {
+    const [input, setInput] = useState("")
+    const [listData, setListData] = useState([])
+    const [cache, setCache] = useState({})
+
+    const fetchData = async() =>{
+        if(cache[input])
+            {
+                console.log('fetching from cache value *******')
+                setListData(cache[input])
+                return;
+            }
+            console.log('fetching from data api *******')
+        const res = await fetch(`https://dummyjson.com/recipes/search?q=${input}`)
+        const data = await res.json();
+        setCache(prev =>({
+            ...prev,
+            [input]:data?.recipes
+        }))
+       setListData(data?.recipes)
+    }
+
+    useEffect(() => {
+       
+        const timer = setTimeout(fetchData, 400)
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [input])
+
+
+
+    return (
+        <>
+            <h1>Personal Search Bar</h1>
+            <br />
+            <input className='inputDiv' type='text' value={input} onChange={(e) => setInput(e.target.value)} />
+            <div className='containerList'>
+                {
+                    listData?.map(item => (
+                        <span className='listClass' key={item.index}>
+                            {item.name}
+                        </span>
+                    ))
+                }
+            </div>
+        </>
+    )
+}
+
+export default Search
+
+
+________-
+
+Search.css-
+
+.inputDiv{
+    width: 500px;
+    height: 30px;
+}
+
+.containerList{
+    border: 1px solid black;
+    margin: auto;
+    width: 500px;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.listClass{
+    display: block;
+    padding: 2px;
+    text-align: left;
+    margin-bottom: 2px;
+}
+
