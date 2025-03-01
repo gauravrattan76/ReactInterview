@@ -1,0 +1,90 @@
+Pagination in React-
+_________________________
+
+Create array using -
+
+
+Const  array = Array.from({length:100},(_,i) => I+1)
+
+
+Creates array from 1 to 100
+
+________________________
+
+
+Code for Comp-
+
+
+import React, { useState } from 'react'
+import Pagination from './Pagination';
+
+const API_DATA = Array.from({ length: 105 }, (_, i) => `item${i + 1}`)
+const PAGE_SIZE = 10;
+const totalPages = Math.ceil(API_DATA.length / PAGE_SIZE);
+
+const Comp1 = () => {
+    const [currPage, setCurrPage] = useState(1)
+    const pagesArray = Array.from({ length: totalPages }, (_, i) => i + 1)
+    const lastIndex = currPage * PAGE_SIZE;
+    const firstIndex = lastIndex - PAGE_SIZE;
+    const currElements = API_DATA.slice(firstIndex, lastIndex)
+
+    const goToPrev = () => {
+        setCurrPage(p => p - 1)
+    }
+
+    const goToNext = () => {
+        setCurrPage(p => p + 1)
+    }
+
+    const goToPage = (num) => {
+        setCurrPage(num)
+    }
+
+    return (
+        <>
+            <h1>This will be my pgainaiton component</h1>
+            <br />
+            <div>
+                {
+                    currElements.map((item, index) => (
+                        <div key={index}>{item}</div>
+                    ))
+                }
+            </div>
+            <Pagination currPage={currPage} goToPrev={goToPrev} goToPage={goToPage} goToNext={goToNext} pagesArray={pagesArray} totalPages={totalPages} />
+
+        </>
+    )
+}
+
+
+export default Comp1
+
+
+______________
+
+
+Pagination.js
+
+
+import React from 'react'
+
+
+const Pagination = ({ currPage, goToPrev, goToPage, goToNext, pagesArray, totalPages }) => {
+    return (
+        <div>
+            <span>
+                <button disabled={currPage === 1} onClick={goToPrev}>prev</button>
+                {
+                    pagesArray.map((item, index) => (
+                        <button key={index} onClick={() => goToPage(item)}>{item}</button>
+                    ))
+                }
+                <button disabled={currPage === totalPages} onClick={goToNext}>next</button>
+            </span>
+        </div>
+    )
+}
+
+export default Pagination;
