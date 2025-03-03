@@ -1,0 +1,67 @@
+import React, { useEffect, useRef, useState } from 'react'
+
+const Data = () => {
+    const [data, setData] = useState([])
+    const [pageNum, setPageNum] = useState(1)
+    const [loading, setLoading] = useState(false)
+
+    const divRef = useRef(null)
+
+    const fetchData = async () => {
+        setLoading(true)
+        console.log('fetchdata api is called here******')
+        const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=10&_page=${pageNum}`);
+        const dataVal = await res.json();
+        setData(prev => [...prev ,...dataVal]);
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [pageNum])
+    
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            console.log('observer instance getting called******')
+            if (entries[0].isIntersecting && !loading) {
+                console.log('pagination set ip is happening here******')
+                setPageNum(p => p + 1)
+            }
+        }, {
+            threshold: 1
+        })
+
+        if (divRef.current) {
+            console.log('observer set up  happening here******')
+            observer.observe(divRef.current)
+        }
+
+        return () => {
+            console.log('cleanup is called here******')
+            observer.disconnect()
+        }
+    }, [loading])
+
+
+    return (
+        <>
+            This is the data component
+            <br />
+            {
+                data?.map(item => (
+                    <div className='containerDiv' key={item.id}>
+                        {item.title}
+                    </div>
+                ))
+            }
+            <br />
+            <div ref={divRef}>Loading.........</div>
+          
+        </>
+    )
+}
+
+export default Data
+
+
+
