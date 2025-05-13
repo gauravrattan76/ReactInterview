@@ -1,0 +1,36 @@
+React components go through a lifecycle of events, each with associated methods that can be overridden to run code at specific times in the component's existence. These methods are grouped into three phases: mounting, updating, and unmounting. 
+Mounting
+This phase occurs when a component is created and inserted into the DOM. 
+constructor(): Initializes the component's state and binds event handlers.
+
+
+static getDerivedStateFromProps(): Rarely used, allows updating state based on changes in props.
+
+
+render(): Required method that returns the JSX to be rendered.
+
+
+componentDidMount(): Invoked immediately after the component is mounted, good for fetching data or setting up subscriptions.
+
+
+__________________________________________________
+Updating
+This phase occurs when a component's props or state change, causing a re-render.
+static getDerivedStateFromProps(): As in mounting, allows updating state based on props changes.
+
+
+shouldComponentUpdate(): Determines if the component should re-render. Can be used for performance optimization.
+
+
+render(): Renders the updated JSX.
+
+
+getSnapshotBeforeUpdate(): Captures information from the DOM before it's updated, rarely used.
+
+
+componentDidUpdate(): Invoked after the component is updated, good for performing DOM manipulations or additional data fetching.
+__________________________________________________
+
+Unmounting
+This phase occurs when a component is removed from the DOM. 
+componentWillUnmount(): Invoked immediately before the component is unmounted, used for cleaning up resources like timers or subscriptions.
