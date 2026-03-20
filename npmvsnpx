@@ -1,0 +1,18 @@
+npm - is a node package manager to install dependencies , it does the folloeing tasks
+
+Installs dependencies=
+Manages package.json
+Runs scripts
+
+
+2. npx (Node Package Executor)
+Used to run packages without installing them globally
+
+What it does:
+
+Executes packages directly
+
+Downloads temporarily if not installed
+
+Avoids global installs
+
