@@ -1,0 +1,176 @@
+STEP 1: User hits UI
+User → https://myapp.com
+
+
+
+No session → calls backend
+
+
+UI → GET /auth/status
+
+
+
+
+Backend redirects to PingFederate
+Backend responds:
+
+302 Redirect → PingFederate /authorize
+
+
+https://pingfed.com/as/authorization.oauth2?
+  client_id=abc
+  redirect_uri=https://backend.com/callback
+  response_type=code
+  scope=openid profile
+  state=xyz
+  code_challenge=abc
+
+
+
+STEP 3: User logs in (SSO)
+PingFederate:
+* Authenticates user
+* Creates its own session
+
+
+
+PingFed → backend/callback?code=XYZ&state=xyz
+
+
+Goes to backend (NOT UI)
+
+
+STEP 5: Backend exchanges code → token
+Backend calls:
+
+POST /as/token.oauth2
+
+
+
+
+Gets:
+
+access_token
+id_token
+refresh_token
+
+👉 Signed using private key 🔒
+
+
+
+STEP 6: Backend stores tokens securely
+👉 Storage options:
+* Memory
+* Redis
+* DB
+
+sessionId → tokens
+
+
+
+STEP 6: Backend stores tokens securely
+👉 Storage options:
+* Memory
+* Redis
+* DB
+
+sessionId → tokens
+
+
+
+
+🟢 STEP 8: UI uses session (NO TOKEN)
+Now UI calls APIs:
+
+fetch("/api/data", {
+  credentials: "include"
+});
+
+👉 Browser automatically sends cookie
+
+
+
+🟢 STEP 9: Backend processes request
+Backend:
+1. Reads sessionId
+2. Fetches stored token
+3. Validates token
+
+
+
+🔍 STEP 10: Token Validation
+Backend verifies:
+
+✔ Signature → using PUBLIC KEY
+✔ Expiry → exp
+✔ Issuer → PingFed
+✔ Audience → your app
+
+
+
+STEP 11: Backend calls downstream APIs
+
+Backend → API
+Authorization: Bearer access_token
+
+
+
+🔁 STEP 13: Token Refresh
+When token expires:
+👉 Backend uses:
+
+refresh_token → new access_token
+
+
+
+CRYPTO (IMPORTANT)
+
+Token signing
+
+PingFederate:
+  PRIVATE KEY → signs JWT
+
+
+Token verification
+
+Backend:
+  PUBLIC KEY → verifies JWT
+
+
+
+
+
+UI checks:
+
+“Do I have session/token?”
+If NO → redirect to PingFederate
+
+
+🟡 STEP 2: Redirect to PingFederate
+
+Browser goes to:
+
+https://pingfed.com/as/authorization.oauth2?
+  client_id=abc
+  redirect_uri=myapp/callback
+  response_type=code
+  scope=openid profile
+
+
+
+
+
+STEP 3: User logs in
+
+PingFederate:
+
+Shows login OR
+Uses SSO (AD / LDAP / MFA)
+
+
+🟢 STEP 4: Authorization Code (NOT token yet!)
+
+After login:
+
+PingFederate → redirects back
+myapp.com/callback?code=XYZ123
