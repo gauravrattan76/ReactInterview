@@ -1,0 +1,132 @@
+CSRF is when an attacker tricks a logged-in user’s browser into sending a request to your backend without the user’s intent
+
+
+User is authenticated (cookie/session exists)
+↓
+Attacker triggers request from another site
+↓
+Browser automatically sends cookie
+↓
+Backend thinks it’s a valid user
+
+
+“CSRF is an attack where a malicious site tricks a user’s browser into making unauthorized requests using their authenticated session. CORS does not prevent CSRF because it only blocks access to responses, not the sending of requests. To prevent CSRF, we use SameSite cookies to restrict cookie sharing across sites and CSRF tokens to validate that requests originate from the trusted application.”
+
+
+
+What is Cross-Site Request Forgery?
+
+👉 CSRF is when an attacker tricks a logged-in user’s browser into sending a request to your backend without the user’s intent
+
+🧠 Core Idea
+User is authenticated (cookie/session exists)
+↓
+Attacker triggers request from another site
+↓
+Browser automatically sends cookie
+↓
+Backend thinks it’s a valid user
+💥 Step-by-Step Attack Flow
+🟢 Step 1: User logs into your app
+https://bank.com
+
+Browser stores:
+
+sessionId=abc123
+🔴 Step 2: User visits malicious site
+https://evil.com
+💥 Step 3: Malicious site triggers request
+<form action="https://bank.com/transfer" method="POST">
+  <input name="amount" value="10000" />
+</form>
+<script>document.forms[0].submit()</script>
+🟡 Step 4: Browser sends request automatically
+POST /transfer
+Cookie: sessionId=abc123
+Origin: https://evil.com
+😨 Step 5: Backend processes it
+“Valid session → allow request”
+
+👉 Money transferred ❌
+
+⚡ Why CSRF Works
+
+👉 Because:
+
+1. Browser auto-sends cookies
+2. Backend trusts cookie blindly
+❗ Why CORS DOES NOT STOP CSRF
+
+👉 Even if Cross-Origin Resource Sharing is enabled:
+
+🔥 Important Truth
+CORS blocks response access, NOT request sending
+What actually happens:
+Request goes to backend ✅
+Backend processes it ✅
+Browser blocks response ❌
+
+👉 Damage already done ❗
+
+🔐 How to Prevent CSRF
+🟢 1. SameSite Cookies
+What it does
+Controls when browser sends cookies
+Use:
+Set-Cookie: sessionId=abc123; SameSite=Strict
+Effect:
+Cross-site request → cookie NOT sent ❌
+
+👉 So:
+
+Backend receives NO session → request fails ✅
+🔥 Result
+Attack blocked at browser level
+🟡 2. CSRF Token (MOST IMPORTANT)
+🧠 Idea
+
+👉 Only your UI knows the token
+
+🔁 Flow
+Step 1: Backend generates token
+csrfToken = xyz123
+Step 2: Sends to UI
+API response OR
+cookie (non-HttpOnly)
+Step 3: UI sends it with request
+POST /transfer
+Cookie: sessionId=abc123
+X-CSRF-Token: xyz123
+Step 4: Backend validates
+if (token matches) → allow
+else → reject ❌
+🔥 Why attacker fails
+
+👉 Malicious site cannot:
+
+Read csrfToken ❌
+
+👉 So cannot send correct token
+
+⚠️ Why BOTH are needed
+Protection	Strength
+SameSite	Good
+CSRF Token	Strong
+
+👉 Best practice:
+
+Use BOTH
+🧠 Final Mental Model
+CORS → controls reading response
+CSRF → abuses sending request
+SameSite → blocks cookie sending
+CSRF Token → validates request authenticity
+🧾 Final Takeaway
+
+👉
+CSRF occurs because browsers automatically include authentication cookies in requests, allowing attackers to perform unauthorized actions. CORS does not prevent this because it only restricts response access. CSRF can be mitigated using SameSite cookies to block cross-site cookie sending and CSRF tokens to validate legitimate requests.
+
+🎯 Perfect Interview Answer
+
+👉
+“CSRF is an attack where a malicious site tricks a user’s browser into making unauthorized requests using their authenticated session. CORS does not prevent CSRF because it only blocks access to responses, not the sending of requests. To prevent CSRF, we use SameSite cookies to restrict cookie sharing across sites and CSRF tokens to validate that requests originate from the trusted application.”
